@@ -1,63 +1,82 @@
 
+" scrolling and cursor movement
+noremap - <S-Down>
+noremap = <S-Up>
 
 noremap 0 ^
+noremap ; <End>
 noremap <Space> w
 
+" don't overwrite the registry when delete with x
 nnoremap x "_x
 
+" auto complete
 inoremap <M-n> <C-n>
 
+" Windows-style paste
 inoremap <C-v> <C-R>*
 cnoremap <C-v> <C-R>*
 
-inoremap <C-o> <End>
-inoremap <C-h> <Left>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-l> <Right>
 
-cnoremap <C-o> <End>
-cnoremap <C-h> <Left>
-cnoremap <C-l> <Right>
+" cursor movement in edit modes
+inoremap <M-o> <Esc>o
+inoremap <M-b> <Esc>^i
+inoremap <M-;> <End>
 
+inoremap <M-h> <Left>
+inoremap <M-j> <Down>
+inoremap <M-k> <Up>
+inoremap <M-l> <Right>
 
-noremap <C-h> <C-W>h
-noremap <C-j> <C-W>j
-noremap <C-k> <C-W>k
-noremap <C-l> <C-W>l
-
-noremap <C-Left> <C-W>h
-noremap <C-Down> <C-W>j
-noremap <C-Up> <C-W>k
-noremap <C-Right> <C-W>l
+cnoremap <M-b> <C-b>
+cnoremap <M-;> <End>
+cnoremap <M-h> <Left>
+cnoremap <M-l> <Right>
 
 
-noremap <C-w> q:
-noremap <C-q> :q<CR>
+" tabs and windows control (switching, closing, etc.)
+nnoremap <C-q> :q<CR>
+nnoremap <C-w> :tabclose<CR>
 
-noremap <Leader>bd :Bclose<CR>
-noremap <Leader>ba :1,1000 bd!<CR>
-noremap <Leader>bt :tab sball<CR>
+nnoremap <M-w> :tabprevious<CR>
+inoremap <M-w> <Esc>:tabprevious<CR>
+nnoremap <C-Tab> :tabnext<CR>
 
-noremap <Leader>t :tabnew<CR>
-noremap <Leader>m :tabmove
-noremap <Leader>e :tabedit <C-r>=expand("%:p:h")<CR>/
-noremap <C-Tab> :tabnext<CR>
+nnoremap <Leader>m :tabmove
 
-noremap <Leader>cd :cd %:p:h<CR>:pwd<CR>
+nnoremap <C-h> <C-W>h
+nnoremap <C-j> <C-W>j
+nnoremap <C-k> <C-W>k
+nnoremap <C-l> <C-W>l
+nnoremap <C-Left> <C-W>h
+nnoremap <C-Down> <C-W>j
+nnoremap <C-Up> <C-W>k
+nnoremap <C-Right> <C-W>l
+
+
+" buffer control
+nnoremap <Leader>bd :Bclose<CR>
+nnoremap <Leader>ba :1,1000 bd!<CR>
+nnoremap <Leader>bt :tab sball<CR>
+
+" open new...
+nnoremap <Leader>t :tabnew<CR>
+nnoremap <Leader>e :tabedit <C-r>=expand("%:p:h")<CR>/
+
+nnoremap <Leader>cd :cd %:p:h<CR>:pwd<CR>
+
+nnoremap <Leader>sb :tabnew ./sandbox.tmp<CR>
+
+cnoremap <Leader><Space> tabedit <C-\>eCurrentFileDir("e")<CR>
+cnoremap <Leader>u <C-\>eDeleteTillSlash()<cr>
+
+
 
 " Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
 nnoremap <M-j> mz:m+<cr>`z
 nnoremap <M-k> mz:m-2<cr>`z
 vnoremap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vnoremap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
-if has("mac") || has("macunix")
-  nmap <D-j> <M-j>
-  nmap <D-k> <M-k>
-  vmap <D-j> <M-j>
-  vmap <D-k> <M-k>
-endif
 
 
 " When you press gv you vimgrep after the selected text
@@ -73,15 +92,11 @@ nnoremap <Leader>g :vimgrep // <C-R>%<C-A><right><right><right><right><right><ri
 vnoremap <silent> <Leader>r :call VisualSelection('replace', '')<CR>
 
 nnoremap <Leader>c :botright cope20<CR>
-noremap <Leader>n :cn<CR>
-noremap <Leader>p :cp<CR>
-
-noremap <Leader>sb :tabnew ./sandbox.tmp<CR>
-
-cnoremap <Leader><Space> tabedit <C-\>eCurrentFileDir("e")<CR>
-cnoremap <Leader>u <C-\>eDeleteTillSlash()<cr>
+nnoremap <Leader>cn :cn<CR>
+nnoremap <Leader>cp :cp<CR>
 
 
+" change window size
 function! s:mysize(mode)
 	if a:mode > 0
 		winsize 120 32
@@ -96,6 +111,8 @@ command! -nargs=0 FA	call <SID>mysize(-1)
 command! -nargs=0 FD	call <SID>mysize(1)
 command! -nargs=0 FS	call <SID>myfullscreen()
 
+
+" toggle line comment
 vnoremap <Leader># :s/^/\# /<CR>:nohlsearch<CR>
 vnoremap <Leader>/ :s/^/\/\/ /<CR>:nohlsearch<CR>
 vnoremap <Leader>; :s/^/; /<CR>:nohlsearch<CR>
@@ -103,32 +120,34 @@ vnoremap <Leader>" :s/^/" /<CR>:nohlsearch<CR>
 vnoremap <Leader>- :s/^/-- /<CR>:nohlsearch<CR>
 vnoremap <Leader>c :s/^\/\/ \\|^-- \\|^["\#;] //<CR>:nohlsearch<CR>
 
+" toggle block comment
 vnoremap <Leader>* :s/^\(.*\)$/\/\* \1 \*\//<CR>:nohlsearch<CR>
 vnoremap <Leader>< :s/^\(.*\)$/<!-- \1 -->/<CR>:nohlsearch<CR>
 vnoremap <Leader>d :s/^\([/(]\*\\|<!--\) \(.*\) \(\*[/)]\\|-->\)$/\2/<CR>:nohlsearch<CR> 
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Parenthesis/bracket
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" surround selected with...
 vnoremap () <esc>`>a)<esc>`<i(<esc>
 vnoremap [] <esc>`>a]<esc>`<i[<esc>
 vnoremap {} <esc>`>a}<esc>`<i{<esc>
 vnoremap '' <esc>`>a'<esc>`<i'<esc>
 vnoremap "" <esc>`>a"<esc>`<i"<esc>
 
-" Map auto complete of (, ", ', [
+" auto complete of (, ", ', [
 inoremap ( ()<esc>i
+inoremap () ()
 inoremap [ []<esc>i
+inoremap [] []
 inoremap { {}<esc>i
+inoremap {} {}
 inoremap ' ''<esc>i
+inoremap '' ''
 inoremap " ""<esc>i
-inoremap <> <><esc>i
+inoremap "" ""
 
-inoremap ''' '''<esc>o'''<esc>O
-inoremap """ """<esc>o"""<esc>O
-inoremap ### ###<esc>o###<esc>O
-
+" delete matched brackets
+" (you must put the cursor on one side of the brackets to use this)
+nnoremap <Leader>dd mh%r<Space>`hr<Space>
 
 
 
